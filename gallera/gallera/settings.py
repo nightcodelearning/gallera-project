@@ -27,8 +27,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+DATABASE_ROUTERS = [
+    'gallera.db_routers.GalleraDbRouter',
+]
 # Application definition
+
+LOCAL_INSTALLED_APPS = [
+    'api_gallera',
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -37,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-]
+] + LOCAL_INSTALLED_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -77,7 +83,15 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    },
+    'gallera': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'to-be-defined-by-other-settings-file',
+        'USER': "admin",
+        'PASSWORD': "admin180217",
+        'HOST': 'to-be-defined-by-other-settings-file',
+        'PORT': 'to-be-defined-by-other-settings-file',
+    },
 }
 
 

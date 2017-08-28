@@ -4,7 +4,7 @@ from rest_framework import views
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 
-from common.exceptions import BadRequestFormatException
+from gallera.exceptions import BadRequestFormatException
 
 
 logger = logging.getLogger(__name__)
