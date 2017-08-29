@@ -77,3 +77,6 @@ class ChickenSerializer(serializers.ModelSerializer):
             'color',
             'owner',
         )
+
+class ManyChickenSerializer(serializers.Serializer):
+        chickens = ChickenSerializer(many=True)

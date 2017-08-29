@@ -7,6 +7,7 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from gallera.views import ServiceView
+from .serializer import ManyChickenSerializer
 from .serializer import ChickenRequestSerializer
 from .serializer import ChickenSerializer
 from .serializer import EmptySerializer
@@ -46,13 +47,20 @@ class RegisterChickView(BaseApiView):
             new_chicks.save()
             return (new_chicks, status.HTTP_200_OK)
         except:
-            print "Unexpected error:", sys.exc_info()[0]
-            raise
+            return Response(
+                data=dict(
+                    code='Server Error',
+                    message=(
+                        'Unexpected error: {}'
+                    ).format(sys.exc_info()[0]),
+                ),
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 class GetChickView(BaseApiView):
     request_serializer = EmptySerializer
-    response_serializer = ChickenSerializer
+    response_serializer = ManyChickenSerializer
 
     http_method = 'GET'
 
@@ -60,19 +68,41 @@ class GetChickView(BaseApiView):
         v = request_serializer_obj.validated_data
 
         try:
-            chick = Chick.objects.last()
-        except Chick.DoesNotExist:
-            message = (
-                'Cuenta no encontrada para celular: {}'
-            ).format(v['phone_number'])
+            chicks = Chick.objects.all()
+        except:
             return Response(
                 data=dict(
-                    code='NotFound',
-                    message=message,
+                    code='Server Error',
+                    message=(
+                        'Unexpected error: {}'
+                    ).format(sys.exc_info()[0]),
                 ),
                 status=status.HTTP_404_NOT_FOUND,
             )
-        return (chick, status.HTTP_200_OK)
+        return (chicks, status.HTTP_200_OK)
 
 class DeleteChickView(BaseApiView):
-    pass
+    request_serializer = ChickenSerializer
+    response_serializer = ManyChickenSerializer
+
+    http_method = 'POST'
+
+    def process_request(self, request_serializer_obj, request):
+        v = request_serializer_obj.validated_data
+        try:
+            v['chicken'].delete()
+           # instance = Chick.objects.get(id=id)
+           # instance.delete()
+            chicks = Chick.objects.all()
+            return (chicks, status.HTTP_200_OK)
+        except:
+            return Response(
+                data=dict(
+                    code='Server Error',
+                    message=(
+                        'Unexpected error: {}'
+                    ).format(sys.exc_info()[0]),
+                ),
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
