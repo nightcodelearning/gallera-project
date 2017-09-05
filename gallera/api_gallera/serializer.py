@@ -6,7 +6,7 @@ class EmptySerializer(serializers.Serializer):
     pass
 
 class ChickenRequestSerializer(serializers.Serializer):
-    image_url = serializers.CharField(
+    image = serializers.ImageField(
         required=True,
     )
     owner_name = serializers.CharField(
