@@ -7,5 +7,5 @@ from .models import Owner
 from .models import Chick
 
 admin.site.register(Owner)
-admin.site.register(Chick)
 
+admin.site.register(Chick)

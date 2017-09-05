@@ -25,7 +25,7 @@ SECRET_KEY = '#_4ydsl^krm&juc(fvmxsd@ka&7t2435cf3le304zas_wxq*pg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost','192.168.0.15']
 
 DATABASE_ROUTERS = [
     'gallera.db_routers.GalleraDbRouter',
@@ -132,3 +132,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+PROJECT_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..').replace('\\','/')
+SITE_ROOT = PROJECT_ROOT
+
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
+MEDIA_URL = '/media/'
+

@@ -1,37 +1,86 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import os
+from django.conf import settings
+
 from decimal import Decimal
 from functools import partial
 from django.db import models
 from gallera.models import ManagedTVModel
 from gallera.utils import generate_token
+from uuid import uuid4
 
+def get_image_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = '{}.{}'.format(uuid4().hex, ext)
+    return os.path.join('photos', filename)
 
 class Chick(ManagedTVModel):
     """
     Describes a Chick stored in the application.
     """
-
-    ALLOWED_COLORS = [('ROJO', 'ROJO'), ('OTRO', 'OTRO'), ('', '')]
-
-    COLOR_RED = 'ROJO'
+    COLOR_CHINO = 'CHINO'
+    COLOR_MORADO = 'MORADO'
+    COLOR_JABADO = 'JABADO'
+    COLOR_RED = 'PINTO'
     COLOR_OTHER = 'OTRO'
+
+    ALLOWED_COLORS = [
+        ('CHINO', COLOR_CHINO),
+        ('MORADO', COLOR_MORADO),
+        ('JABADO', COLOR_JABADO),
+        ('PINTO', COLOR_RED),
+        ('OTRO', COLOR_OTHER),
+    ]
+
+    CRESTA_PALMA = 'PALMA'
+    CRESTA_ROSA = 'ROSA'
+    CRESTA_OTRA = 'OTRA'
+
+    ALLOWED_CRESTA = [
+        ('PALMA', CRESTA_PALMA),
+        ('ROSA', CRESTA_ROSA),
+        ('OTRA', CRESTA_OTRA)
+    ]
+
+    PATA_BLANCA = 'PATIBLANCO'
+    PATA_AMARILLA = 'PATIAMARILLO'
+    PATA_OTRA = 'OTRO'
+
+    ALLOWED_PATA = [
+        ('PATIBLANCO', PATA_BLANCA),
+        ('PATIAMARILLO', PATA_AMARILLA),
+        ('OTRO', PATA_OTRA)
+    ]
 
     token = models.CharField(
         unique=True,
         max_length=255,
         help_text='unique identifier for chick from this system',
         default=partial(generate_token, 'c'),
+        editable=False
     )
-    owner = models.ForeignKey('api_gallera.Owner')
 
-    born_date = models.DateTimeField(auto_now=True)
+    image = models.ImageField(
+        db_column='image',
+        upload_to=get_image_path,
+        default='',
+    )
 
-    castador_tag = models.CharField(max_length=255, blank=True)
-    castador_name = models.CharField(max_length=255, blank=True)
+    @property
+    def image_url(self):
+        if self.image and hasattr(self.image, 'url'):
+            return self.image.url
 
-    coliseo_tag = models.CharField(max_length=255, blank=True)
-    tagger_name = models.CharField(max_length=255, blank=True)
+    owner_name = models.CharField(max_length=255, blank=True)
+
+    breeder_plate_number = models.CharField(max_length=255, blank=True)
+    breeder_name = models.CharField(max_length=255, blank=True)
+
+    register_date = models.DateTimeField(auto_now=True)
+
+    coliseo_plate_number = models.CharField(max_length=255, blank=True)
+    coliseo_responsible = models.CharField(max_length=255, blank=True)
 
     weight = models.DecimalField(
         max_digits=19,
@@ -40,12 +89,23 @@ class Chick(ManagedTVModel):
     )
 
     color = models.CharField(
-        max_length=4, choices=ALLOWED_COLORS, blank=True, default=''
+        max_length=20,
+        choices=ALLOWED_COLORS,
+        default=COLOR_CHINO,
+    )
+    cresta = models.CharField(
+        max_length=20,
+        choices=ALLOWED_CRESTA,
+        default=CRESTA_PALMA,
+    )
+    pata = models.CharField(
+        max_length=20,
+        choices=ALLOWED_PATA,
+        default=PATA_BLANCA,
     )
 
-
     def __str__(self):
-        return self.castador_tag
+        return self.coliseo_plate_number
 
 
 class Owner(ManagedTVModel):

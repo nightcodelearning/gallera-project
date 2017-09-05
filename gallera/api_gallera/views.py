@@ -10,6 +10,7 @@ from gallera.views import ServiceView
 from .serializer import ManyChickenSerializer
 from .serializer import ChickenRequestSerializer
 from .serializer import ChickenSerializer
+from .serializer import RegisterChickenSerializer
 from .serializer import EmptySerializer
 from .models import Chick
 from .models import Owner
@@ -25,7 +26,7 @@ class BaseApiView(ServiceView):
 class RegisterChickView(BaseApiView):
 
     request_serializer = ChickenRequestSerializer
-    response_serializer = ChickenSerializer
+    response_serializer = RegisterChickenSerializer
 
     http_method = 'POST'
 
@@ -34,7 +35,7 @@ class RegisterChickView(BaseApiView):
         o = Owner.objects.first()
         try:
             print v
-            new_chicks = Chick(
+            new_chicken = Chick(
                 born_date=v['born_date'],
                 castador_name=v['castador_name'],
                 castador_tag=v['castador_tag'],
@@ -42,10 +43,14 @@ class RegisterChickView(BaseApiView):
                 tagger_name=v['tagger_name'],
                 weight=v['weight'],
                 color=v['color'],
-                owner=o
+                owner=o,
+                image=request.FILES['image'],
             )
-            new_chicks.save()
-            return (new_chicks, status.HTTP_200_OK)
+            new_chicken.save()
+
+            chicks = Chick.objects.all()
+
+            # return (chicks, status.HTTP_200_OK)
         except:
             return Response(
                 data=dict(
@@ -57,6 +62,12 @@ class RegisterChickView(BaseApiView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+        chickens = dict(
+            new_chicken=new_chicken,
+            chickens=chicks,
+        )
+        return (chickens, status.HTTP_200_OK)
+
 
 class GetChickView(BaseApiView):
     request_serializer = EmptySerializer
@@ -65,7 +76,7 @@ class GetChickView(BaseApiView):
     http_method = 'GET'
 
     def process_request(self, request_serializer_obj, request):
-        v = request_serializer_obj.validated_data
+      #  v = request_serializer_obj.validated_data
 
         try:
             chicks = Chick.objects.all()
@@ -79,7 +90,12 @@ class GetChickView(BaseApiView):
                 ),
                 status=status.HTTP_404_NOT_FOUND,
             )
-        return (chicks, status.HTTP_200_OK)
+
+        chickens = dict(
+            chickens=chicks,
+        )
+        return (chickens, status.HTTP_200_OK)
+
 
 class DeleteChickView(BaseApiView):
     request_serializer = ChickenSerializer
@@ -105,4 +121,3 @@ class DeleteChickView(BaseApiView):
                 ),
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-

@@ -6,46 +6,50 @@ class EmptySerializer(serializers.Serializer):
     pass
 
 class ChickenRequestSerializer(serializers.Serializer):
-    born_date = serializers.DateTimeField()
-    castador_tag = serializers.CharField(
-        required=False,
-        allow_blank=True,
+    image_url = serializers.CharField(
+        required=True,
+    )
+    owner_name = serializers.CharField(
+        required=True,
         max_length=255,
-        default='',
+    )
+    breeder_plate_number = serializers.CharField(
+        required=True,
+        max_length=255,
+    )
+    breeder_name = serializers.CharField(
+        required=True,
+        max_length=255,
+    )
+    register_date = serializers.DateTimeField(
+        required=True,
     )
 
-    castador_name = serializers.CharField(
-        required=False,
-        allow_blank=True,
+    coliseo_plate_number = serializers.CharField(
+        required=True,
         max_length=255,
-        default='',
     )
-
-    coliseo_tag = serializers.CharField(
-        required=False,
-        allow_blank=True,
+    coliseo_responsible = serializers.CharField(
+        required=True,
         max_length=255,
-        default='',
     )
-
-    tagger_name = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        max_length=255,
-        default='',
-    )
-
     weight = serializers.DecimalField(
         max_digits=19,
+        required=True,
         decimal_places=2,
         min_value=0
     )
-
     color = serializers.ChoiceField(
         choices=Chick.ALLOWED_COLORS,
-        required=False,
-        allow_blank=True,
-        default='',
+        required=True,
+    )
+    cresta = serializers.ChoiceField(
+        choices=Chick.ALLOWED_CRESTA,
+        required=True,
+    )
+    pata = serializers.ChoiceField(
+        choices=Chick.ALLOWED_PATA,
+        required=True,
     )
 
 
@@ -61,22 +65,27 @@ class OwnerSerializer(serializers.ModelSerializer):
         )
 
 class ChickenSerializer(serializers.ModelSerializer):
-    owner = OwnerSerializer()
-
     class Meta:
         model = Chick
         fields = (
             'token',
-            'born_date',
-            'castador_tag',
-            'castador_name',
-            'born_date',
-            'coliseo_tag',
-            'tagger_name',
+            'image_url',
+            'owner_name',
+            'breeder_plate_number',
+            'breeder_name',
+            'register_date',
+            'coliseo_plate_number',
+            'coliseo_responsible',
+            'weight',
             'weight',
             'color',
-            'owner',
+            'cresta',
+            'pata',
         )
+
+class RegisterChickenSerializer(serializers.Serializer):
+    new_chicken = ChickenSerializer()
+    chickens = ChickenSerializer(many=True)
 
 class ManyChickenSerializer(serializers.Serializer):
         chickens = ChickenSerializer(many=True)
