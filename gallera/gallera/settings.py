@@ -25,7 +25,7 @@ SECRET_KEY = '#_4ydsl^krm&juc(fvmxsd@ka&7t2435cf3le304zas_wxq*pg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','192.168.0.15']
+ALLOWED_HOSTS = ['localhost','192.168.0.136']
 
 DATABASE_ROUTERS = [
     'gallera.db_routers.GalleraDbRouter',
