@@ -32,25 +32,25 @@ class RegisterChickView(BaseApiView):
 
     def process_request(self, request_serializer_obj, request):
         v = request_serializer_obj.validated_data
-        o = Owner.objects.first()
         try:
             print v
             new_chicken = Chick(
-                born_date=v['born_date'],
-                castador_name=v['castador_name'],
-                castador_tag=v['castador_tag'],
-                coliseo_tag=v['coliseo_tag'],
-                tagger_name=v['tagger_name'],
+                owner_name=v['owner_name'],
+                breeder_plate_number=v['breeder_plate_number'],
+                breeder_name=v['breeder_name'],
+                register_date=v['register_date'],
+                coliseo_plate_number=v['coliseo_plate_number'],
+                coliseo_responsible=v['coliseo_responsible'],
                 weight=v['weight'],
                 color=v['color'],
-                owner=o,
+                cresta=v['cresta'],
+                pata=v['pata'],
                 image=request.FILES['image'],
             )
             new_chicken.save()
 
             chicks = Chick.objects.all()
 
-            # return (chicks, status.HTTP_200_OK)
         except:
             return Response(
                 data=dict(
