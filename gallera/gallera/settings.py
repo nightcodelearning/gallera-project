@@ -11,10 +11,11 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -25,7 +26,7 @@ SECRET_KEY = '#_4ydsl^krm&juc(fvmxsd@ka&7t2435cf3le304zas_wxq*pg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','192.168.0.136']
+ALLOWED_HOSTS = ['*']
 
 DATABASE_ROUTERS = [
     'gallera.db_routers.GalleraDbRouter',
@@ -94,6 +95,13 @@ DATABASES = {
     },
 }
 
+DATABASES['default'] = dj_database_url.config()
+DATABASES['gallera'] = dj_database_url.config()
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -130,12 +138,15 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
-
+STATIC_ROOT = 'staticfiles'
 STATIC_URL = '/static/'
 
-PROJECT_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..').replace('\\','/')
-SITE_ROOT = PROJECT_ROOT
+STATICFILES_DIRS = (
+os.path.join(BASE_DIR, 'static'),
+)
 
-MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
+PROJECT_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..').replace('\\','/')
+
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
 MEDIA_URL = '/media/'
 
