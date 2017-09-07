@@ -33,7 +33,6 @@ class RegisterChickView(BaseApiView):
     def process_request(self, request_serializer_obj, request):
         v = request_serializer_obj.validated_data
         try:
-            print v
             new_chicken = Chick(
                 owner_name=v['owner_name'],
                 breeder_plate_number=v['breeder_plate_number'],
