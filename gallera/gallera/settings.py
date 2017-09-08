@@ -82,16 +82,12 @@ WSGI_APPLICATION = 'gallera.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
-    'gallera': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'to-be-defined-by-other-settings-file',
-        'USER': "admin",
-        'PASSWORD': "admin180217",
-        'HOST': 'to-be-defined-by-other-settings-file',
-        'PORT': 'to-be-defined-by-other-settings-file',
+        'NAME': os.environ.get('GALLERA_DB_NAME'),
+        'USER': os.environ.get('GALLERA_DB_USR'),
+        'PASSWORD': os.environ.get('GALLERA_DB_PASS'),
+        'HOST': os.environ.get('GALLERA_DB_HOST'),
+        'PORT': os.environ.get('GALLERA_DB_PORT'),
     },
 }
 
