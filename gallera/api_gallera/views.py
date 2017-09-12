@@ -8,11 +8,14 @@ from rest_framework import status
 from rest_framework.response import Response
 from gallera.views import ServiceView
 from .serializer import ManyChickenSerializer
+from .serializer import ResponseChickenSerializer
 from .serializer import ChickenRequestSerializer
 from .serializer import ChickenSerializer
 from .serializer import RegisterChickenSerializer
 from .serializer import EmptySerializer
 from .models import Chick
+
+from django.db.models import Count
 from .models import Owner
 
 from django.http import HttpResponse
@@ -70,7 +73,7 @@ class RegisterChickView(BaseApiView):
 
 class GetChickView(BaseApiView):
     request_serializer = EmptySerializer
-    response_serializer = ManyChickenSerializer
+    response_serializer = ResponseChickenSerializer
 
     http_method = 'GET'
 
@@ -78,7 +81,20 @@ class GetChickView(BaseApiView):
       #  v = request_serializer_obj.validated_data
 
         try:
-            chicks = Chick.objects.all()
+            response = Chick.objects.extra(
+                {'date_created': "date(date_created)"}).values(
+                'date_created').annotate(
+                count=Count('id')).order_by('date_created')
+            for a in response:
+                a['chickens'] = Chick.objects.filter(
+                    date_created__month=a['date_created'].month,
+                    date_created__year=a['date_created'].year
+                )
+            res = dict(
+                response=response,
+            )
+            print(res)
+            return (res, status.HTTP_200_OK)
         except:
             return Response(
                 data=dict(
@@ -90,10 +106,6 @@ class GetChickView(BaseApiView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        chickens = dict(
-            chickens=chicks,
-        )
-        return (chickens, status.HTTP_200_OK)
 
 
 class DeleteChickView(BaseApiView):

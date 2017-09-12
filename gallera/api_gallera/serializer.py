@@ -70,6 +70,7 @@ class ChickenSerializer(serializers.ModelSerializer):
         fields = (
             'token',
             'image_url',
+            'owner_id',
             'owner_name',
             'breeder_plate_number',
             'breeder_name',
@@ -88,4 +89,9 @@ class RegisterChickenSerializer(serializers.Serializer):
     chickens = ChickenSerializer(many=True)
 
 class ManyChickenSerializer(serializers.Serializer):
+        date_created = serializers.DateTimeField()
+        count = serializers.IntegerField()
         chickens = ChickenSerializer(many=True)
+
+class ResponseChickenSerializer(serializers.Serializer):
+    response = ManyChickenSerializer(many=True)

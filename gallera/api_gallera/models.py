@@ -120,7 +120,12 @@ class Chick(ManagedTVModel):
     breeder_plate_number = models.CharField(max_length=255, blank=True)
     breeder_name = models.CharField(max_length=255, blank=True)
 
-    register_date = models.DateTimeField(auto_now=True)
+    # register_date2 = models.DateTimeField(auto_now=True)
+
+    @property
+    def register_date(self):
+        return "{} - {}".format(self.date_created.month, self.date_created.year)
+
 
     coliseo_plate_number = models.CharField(max_length=255, blank=True)
     coliseo_responsible = models.CharField(max_length=255, blank=True)
