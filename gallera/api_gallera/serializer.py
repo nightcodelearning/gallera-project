@@ -89,7 +89,7 @@ class RegisterChickenSerializer(serializers.Serializer):
     chickens = ChickenSerializer(many=True)
 
 class ManyChickenSerializer(serializers.Serializer):
-        date_created = serializers.DateTimeField()
+        date = serializers.DateTimeField()
         count = serializers.IntegerField()
         chickens = ChickenSerializer(many=True)
 

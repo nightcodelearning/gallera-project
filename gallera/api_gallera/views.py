@@ -16,6 +16,8 @@ from .serializer import EmptySerializer
 from .models import Chick
 
 from django.db.models import Count
+from django.db.models.functions import TruncDate
+
 from .models import Owner
 
 from django.http import HttpResponse
@@ -81,14 +83,15 @@ class GetChickView(BaseApiView):
       #  v = request_serializer_obj.validated_data
 
         try:
-            response = Chick.objects.extra(
-                {'date_created': "date(date_created)"}).values(
-                'date_created').annotate(
-                count=Count('id')).order_by('date_created')
+
+            response = Chick.objects.annotate(date=TruncDate(
+                'date_created')).values('date').annotate(count=Count(
+                'id')).order_by('date')
+
             for a in response:
                 a['chickens'] = Chick.objects.filter(
-                    date_created__month=a['date_created'].month,
-                    date_created__year=a['date_created'].year
+                    date_created__month=a['date'].month,
+                    date_created__year=a['date'].year
                 )
             res = dict(
                 response=response,
