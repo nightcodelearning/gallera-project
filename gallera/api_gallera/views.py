@@ -84,9 +84,6 @@ class GetChickView(BaseApiView):
       #  v = request_serializer_obj.validated_data
 
         try:
-            import locale
-            locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
-
             chickens = Chick.objects.all()
             dates = Search.objects.all()
 
