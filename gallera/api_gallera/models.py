@@ -9,11 +9,32 @@ from django.db import models
 from gallera.models import ManagedTVModel
 from gallera.utils import generate_token
 from uuid import uuid4
+from django.db import models, transaction
+
+
+from django.utils.translation import get_language, activate
+activate('es')
 
 def get_image_path(instance, filename):
     ext = filename.split('.')[-1]
     filename = '{}.{}'.format(uuid4().hex, ext)
     return os.path.join('photos', filename)
+
+
+class Search(ManagedTVModel):
+    token = models.CharField(
+        unique=True,
+        max_length=255,
+        help_text='unique identifier for search from this system',
+        default=partial(generate_token, 's'),
+    )
+
+    group_date = models.CharField(max_length=255, blank=True)
+
+    count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.group_date
 
 
 class Owner(ManagedTVModel):
@@ -49,7 +70,7 @@ class Owner(ManagedTVModel):
         ]
 
     def __str__(self):
-        return self.legal_id_number
+        return self.full_name
 
 
 class Chick(ManagedTVModel):
@@ -113,6 +134,12 @@ class Chick(ManagedTVModel):
         Owner, models.DO_NOTHING, blank=True, null=True,
     )
 
+    search_group = models.ForeignKey(
+        Search, models.DO_NOTHING, blank=True, null=True,
+    )
+
+    # search_group = models.OneToOneField(Search, related_name="course_taken")
+
     @property
     def owner_name(self):
         return self.owner.full_name
@@ -124,8 +151,9 @@ class Chick(ManagedTVModel):
 
     @property
     def register_date(self):
-        return "{} - {}".format(self.date_created.month, self.date_created.year)
-
+        import locale
+        locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+        return self.date_created.strftime('%B - %Y')
 
     coliseo_plate_number = models.CharField(max_length=255, blank=True)
     coliseo_responsible = models.CharField(max_length=255, blank=True)
@@ -154,5 +182,16 @@ class Chick(ManagedTVModel):
 
     def __str__(self):
         return self.coliseo_plate_number
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        models.DateTimeField(auto_now=True)
+        import datetime
+        date = datetime.datetime.now()
+        self.search_group, _ = Search.objects.get_or_create(
+            group_date=date.strftime('%B - %Y'))
+        self.search_group.count = self.search_group.count+1
+        self.search_group.save()
+        super(Chick, self).save(*args, **kwargs)
 
 

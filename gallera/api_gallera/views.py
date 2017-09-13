@@ -14,6 +14,7 @@ from .serializer import ChickenSerializer
 from .serializer import RegisterChickenSerializer
 from .serializer import EmptySerializer
 from .models import Chick
+from .models import Search
 
 from django.db.models import Count
 from django.db.models.functions import TruncDate
@@ -83,20 +84,16 @@ class GetChickView(BaseApiView):
       #  v = request_serializer_obj.validated_data
 
         try:
+            import locale
+            locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 
-            response = Chick.objects.annotate(date=TruncDate(
-                'date_created')).values('date').annotate(count=Count(
-                'id')).order_by('date')
+            chickens = Chick.objects.all()
+            dates = Search.objects.all()
 
-            for a in response:
-                a['chickens'] = Chick.objects.filter(
-                    date_created__month=a['date'].month,
-                    date_created__year=a['date'].year
-                )
             res = dict(
-                response=response,
+                chickens=chickens,
+                dates=dates,
             )
-            print(res)
             return (res, status.HTTP_200_OK)
         except:
             return Response(

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Chick
 from .models import Owner
+from .models import Search
 
 class EmptySerializer(serializers.Serializer):
     pass
@@ -74,6 +75,7 @@ class ChickenSerializer(serializers.ModelSerializer):
             'owner_name',
             'breeder_plate_number',
             'breeder_name',
+            'date_created',
             'register_date',
             'coliseo_plate_number',
             'coliseo_responsible',
@@ -88,10 +90,17 @@ class RegisterChickenSerializer(serializers.Serializer):
     new_chicken = ChickenSerializer()
     chickens = ChickenSerializer(many=True)
 
-class ManyChickenSerializer(serializers.Serializer):
-        date = serializers.DateTimeField()
-        count = serializers.IntegerField()
-        chickens = ChickenSerializer(many=True)
+class ManyChickenSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Search
+            fields = (
+                'id',
+                'token',
+                'group_date',
+                'date_created',
+                'count',
+            )
 
 class ResponseChickenSerializer(serializers.Serializer):
-    response = ManyChickenSerializer(many=True)
+    dates = ManyChickenSerializer(many=True)
+    chickens = ChickenSerializer(many=True)
