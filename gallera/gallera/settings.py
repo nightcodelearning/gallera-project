@@ -123,10 +123,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-LANGUAGES = (
-    ('es', 'Spanish')
-)
-
 TIME_ZONE = 'UTC'
 
 USE_I18N = True

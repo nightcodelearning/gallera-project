@@ -149,12 +149,6 @@ class Chick(ManagedTVModel):
 
     # register_date2 = models.DateTimeField(auto_now=True)
 
-    @property
-    def register_date(self):
-        import locale
-        locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
-        return self.date_created.strftime('%B - %Y')
-
     coliseo_plate_number = models.CharField(max_length=255, blank=True)
     coliseo_responsible = models.CharField(max_length=255, blank=True)
 
@@ -188,6 +182,9 @@ class Chick(ManagedTVModel):
         models.DateTimeField(auto_now=True)
         import datetime
         date = datetime.datetime.now()
+        import locale
+        locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+
         self.search_group, _ = Search.objects.get_or_create(
             group_date=date.strftime('%B - %Y'))
         self.search_group.count = self.search_group.count+1
