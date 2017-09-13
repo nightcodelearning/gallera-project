@@ -76,6 +76,7 @@ class ChickenSerializer(serializers.ModelSerializer):
             'breeder_plate_number',
             'breeder_name',
             'date_created',
+            'search_group',
             'coliseo_plate_number',
             'coliseo_responsible',
             'weight',
