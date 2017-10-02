@@ -128,7 +128,8 @@ class Chick(ManagedTVModel):
     @property
     def image_url(self):
         if self.image and hasattr(self.image, 'url'):
-            return self.image.url
+            #return self.image.url
+            return "http://1.bp.blogspot.com/-qDj5VSTAXuU/T10pqDl769I/AAAAAAAAAlY/KdYyfndsENA/s1600/LINEAS+DE+JAULAS+PARA+GALLOS+DE+PELEA.jpg"
 
     owner = models.ForeignKey(
         Owner, models.DO_NOTHING, blank=True, null=True,
@@ -190,5 +191,3 @@ class Chick(ManagedTVModel):
         self.search_group.count = self.search_group.count+1
         self.search_group.save()
         super(Chick, self).save(*args, **kwargs)
-
-
