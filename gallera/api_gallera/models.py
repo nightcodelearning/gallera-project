@@ -178,16 +178,4 @@ class Chick(ManagedTVModel):
     def __str__(self):
         return self.coliseo_plate_number
 
-    @transaction.atomic
-    def save(self, *args, **kwargs):
-        models.DateTimeField(auto_now=True)
-        import datetime
-        date = datetime.datetime.now()
-        import locale
-        locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
-
-        self.search_group, _ = Search.objects.get_or_create(
-            group_date=date.strftime('%B - %Y'))
-        self.search_group.count = self.search_group.count+1
-        self.search_group.save()
-        super(Chick, self).save(*args, **kwargs)
+    
